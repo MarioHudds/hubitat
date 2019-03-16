@@ -11,6 +11,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
+ // temeratureUp() and temperatureDown() methods added by MarioHudds 
 metadata {
 	definition (name: "EM Enhanced Z-Wave Thermostat", namespace: "rboy", author: "RBoy") {
 		capability "Actuator"
