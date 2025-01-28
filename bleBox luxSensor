@@ -13,12 +13,11 @@ open API documentation for development and is intended for integration into the 
 
 
 ===== Hiatory =====
-26.01.2025 1st attempt to luxSensor driver
-minor changes will follow
+
 */
 //        ===== Definitions, Installation and Updates =====
 def driverVer() { return "2.0.6" }
-def apiLevel() { return 20210413 }        //        bleBox latest API Level, 7.6.2021
+def apiLevel() { return 20220505 }        //        bleBox latest API Level, 5.5.2022
 
 
 metadata {
@@ -31,18 +30,11 @@ metadata {
         capability "IlluminanceMeasurement"
         attribute "commsError", "bool"
        // Illumination
-        attribute "illuminance1", "number"
-        attribute "illuminanceAvg1", "number"
-        attribute "illuminanceMax1", "number"
-        attribute "luxName1", "string"
-        attribute "illuminance2", "number"
-        attribute "illuminanceAvg2", "number"
-        attribute "illuminanceMax2", "number"
-        attribute "luxName2", "string"
-        attribute "illuminance3", "number"
-        attribute "illuminanceAvg3", "number"
-        attribute "illuminanceMax3", "number"
-        attribute "luxName3", "string"
+        attribute "illuminance", "number"
+        attribute "illuminanceAvg", "number"
+        attribute "illuminanceMax", "number"
+        attribute "luxName", "string"
+ 
     }
     preferences {
         input ("statusLed", "bool",
@@ -82,7 +74,7 @@ def updated() {
     updateDataValue("driverVersion", driverVer())
     //        Check apiLevel and provide state warning when old.
     if (apiLevel() > getDataValue("apiLevel")) {
-        state.apiNote = "<b>Device api software is not the latest available. Consider updating."
+        state.apiNote = "<b>Device api level should be 20220505"// apiLevel
     } else {
         state.remove("apiNote")
     }
@@ -191,16 +183,40 @@ def updateSensorData(response) {
     if (illuminanceValues) {
         def sensorNumber = 1 // Assuming we only get data for a single lux sensor ID:0
         def luxName = "Lux Sensor 1" // Default lux sensor name
+        def scaledIlluminance
+        def scaledIlluminanceAvg
+        def scaledIlluminanceMax
+        
+        if (illuminanceValues.illuminance != null) {
+            if (illuminanceValues.illuminance > 0 && illuminanceValues.illuminance <= 1000) {
+                scaledIlluminance = String.format("%.1f", (illuminanceValues.illuminance / 100))
+             } else {
+                scaledIlluminance = Math.round(illuminanceValues.illuminance / 100).toInteger()
+            }
+        }
 
-         if (illuminanceValues.illuminance != null) {
-             def scaledIlluminance = Math.round(illuminanceValues.illuminance / 100).toInteger()
-             def scaledIlluminanceAvg = Math.round(illuminanceValues.illuminanceAvg / 100).toInteger()
-             def scaledIlluminanceMax = Math.round(illuminanceValues.illuminanceMax / 100).toInteger()
+        if (illuminanceValues.illuminanceAvg != null) {
+            if (illuminanceValues.illuminanceAvg > 0 && illuminanceValues.illuminanceAvg <= 1000) {
+                scaledIlluminanceAvg = String.format("%.1f", (illuminanceValues.illuminanceAvg / 100))
+            } else {
+                scaledIlluminanceAvg = Math.round(illuminanceValues.illuminanceAvg / 100).toInteger()
+            }
+        }
+        
+        if (illuminanceValues.illuminanceMax != null) {
+            if (illuminanceValues.illuminanceMax > 0 && illuminanceValues.illuminanceMax <= 1000) {
+                scaledIlluminanceMax = String.format("%.1f", (illuminanceValues.illuminanceMax / 100))
+            } else {
+                scaledIlluminanceMax = Math.round(illuminanceValues.illuminanceMax / 100).toInteger()
+            }
+        }
 
-             sendEvent(name: "illuminance${sensorNumber}", value: scaledIlluminance, unit: "lux")
-             sendEvent(name: "illuminanceAvg${sensorNumber}", value: scaledIlluminanceAvg, unit: "lux")
-             sendEvent(name: "illuminanceMax${sensorNumber}", value: scaledIlluminanceMax, unit: "lux")
-             sendEvent(name: "luxName${sensorNumber}", value: luxName)
+        if (illuminanceValues.illuminance != null) {
+
+             sendEvent(name: "illuminance", value: scaledIlluminance, unit: "lux")
+             sendEvent(name: "illuminanceAvg", value: scaledIlluminanceAvg, unit: "lux")
+             sendEvent(name: "illuminanceMax", value: scaledIlluminanceMax, unit: "lux")
+             sendEvent(name: "luxName", value: luxName)
              logDebug("updateSensorData: Sensor ${sensorNumber}, illuminance: ${scaledIlluminance}, avg: ${scaledIlluminanceAvg}, max: ${scaledIlluminanceMax}, name: ${luxName}")
 
          } else {
