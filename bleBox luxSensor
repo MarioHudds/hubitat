@@ -24,7 +24,7 @@ metadata {
     definition (name: "bleBox luxSensor",
                 namespace: "davegut",
                 author: "Dave Gutheinz",
-                importUrl: "https://raw.githubusercontent.com/DaveGut/HubitatActive/master/bleBoxDevices/Drivers/multiSensor.groovy"
+                importUrl: "https://raw.githubusercontent.com/MarioHudds/hubitat/refs/heads/master/bleBox%20luxSensor"
     ) {
         capability "Refresh"
         capability "IlluminanceMeasurement"
