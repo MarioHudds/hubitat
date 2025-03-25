@@ -12,6 +12,7 @@ language governing permissions and limitations under the License.
 DISCLAIMER: The author of this integration is not associated with blebox.  This code uses the blebox
 open API documentation for development and is intended for integration into the Hubitat Environment.
 
+This driver is based on Blebox multisensor driver developed by David Gutheinz @devegut
 
 ===== Hiatory =====
 
@@ -23,8 +24,8 @@ def apiLevel() { return 20220505 }        //        bleBox latest API Level, 5.5
 
 metadata {
     definition (name: "bleBox luxSensor",
-                namespace: "davegut",
-                author: "Dave Gutheinz",
+                namespace: "ultrasmart",
+                author: "Mariusz Jarczak",
                 importUrl: "https://raw.githubusercontent.com/MarioHudds/hubitat/refs/heads/master/bleBox%20luxSensor"
     ) {
         capability "Refresh"
